@@ -24,12 +24,25 @@ const containsAuthCheck = (statements: EsTreeNode[]): boolean => {
         callNode = child.argument;
       }
 
+      const callee = callNode?.callee;
+      if(!callee) return;
+
+      // Direct call e.g. getSession()
       if (
-        isNodeOfType(callNode?.callee, "Identifier") &&
-        AUTH_FUNCTION_NAMES.has(callNode.callee.name)
+        isNodeOfType(callee, "Identifier") &&
+        AUTH_FUNCTION_NAMES.has(callee.name)
       ) {
         foundAuthCall = true;
-      }
+      } 
+      
+      // Indirect call e.g. auth0.getSession()
+      else if (
+        isNodeOfType(callee, "MemberExpression") &&
+        isNodeOfType(callee.property, "Identified") &&
+        AUTH_FUNCTION_NAMES.has(callee.property.name)
+       ) {
+        foundAuthCall = true;
+       }
     });
   }
   return foundAuthCall;
