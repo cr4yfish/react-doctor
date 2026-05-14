@@ -38,7 +38,7 @@ const containsAuthCheck = (statements: EsTreeNode[]): boolean => {
       // Indirect call e.g. auth0.getSession()
       else if (
         isNodeOfType(callee, "MemberExpression") &&
-        isNodeOfType(callee.property, "Identified") &&
+        isNodeOfType(callee.property, "Identifier") &&
         AUTH_FUNCTION_NAMES.has(callee.property.name)
        ) {
         foundAuthCall = true;
